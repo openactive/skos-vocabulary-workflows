@@ -9,7 +9,7 @@ This workflow is triggered by the `skos-vocabulary-editor`. It retrieves the lat
 
 This workflow runs on every PR to validate the JSON-LD SKOS file, to guarantee its format and integrity (using the JSON Schema file within this repository).
 
-The workflow also runs on the `master` branch, to first validate as above, and then create a new GitHub Release containing the vocabulary, as well as publishing it via GitHub pages.
+The workflow also runs on the `main` branch, to first validate as above, and then create a new GitHub Release containing the vocabulary, as well as publishing it via GitHub pages.
 
 Note the use of `.gitattributes` within the OpenActive SKOS Vocabulary repositories to ensure that these releases only include the SKOS data files and do not include other code or documentation.
 

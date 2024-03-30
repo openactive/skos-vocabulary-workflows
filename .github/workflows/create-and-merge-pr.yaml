@@ -16,37 +16,37 @@ jobs:
       - name: Check out this repository
         uses: actions/checkout@v2
         with:
-          ref: master
-          path: activity-list
+          ref: main
+          path: skos-vocabulary
           fetch-depth: 0
 
-      - name: Download Zip File of latest activity list and collections from activity-list-editor.
+      - name: Download Zip File of latest vocabulary and collections from skos-vocabulary-editor.
         run: |
           mkdir -p downloads
           wget -O downloads/openactive_concepts.zip https://${{ github.event.repository.name }}.openactive.io/en/openactive_concepts.zip
 
       - name: Extract Zip File
         run: |
-          mkdir -p activity-list-editor
-          unzip downloads/openactive_concepts.zip -d activity-list-editor
+          mkdir -p skos-vocabulary-editor
+          unzip downloads/openactive_concepts.zip -d skos-vocabulary-editor
 
       - name: Install jq
         run: |
           sudo apt-get update
           sudo apt-get install -y jq
 
-      - name: Compare current activity list with activity list from activity-list-editor
+      - name: Compare current activity list with activity list from skos-vocabulary-editor
         id: compare
         uses: openactive/skos-compare-action@main
         with:
-          new_json_file: './activity-list-editor/activity-list.jsonld'
-          old_json_file: './activity-list/data/activity-list.jsonld'
+          new_json_file: './skos-vocabulary-editor/${{ github.event.repository.name }}.jsonld'
+          old_json_file: './skos-vocabulary/data/${{ github.event.repository.name }}.jsonld'
 
       # For security reasons, we only copy valid JSON-LD files to the next step
       - name: Validate and Copy JSON-LD files
         run: |
-          SOURCE_DIR="activity-list-editor"
-          DEST_DIR="activity-list/data"
+          SOURCE_DIR="skos-vocabulary-editor"
+          DEST_DIR="skos-vocabulary/data"
           find "$SOURCE_DIR" -name '*.jsonld' | while read file; do
             if jq empty "$file" 2>/dev/null; then
               echo "Valid JSON-LD: $file"
@@ -66,20 +66,20 @@ jobs:
         run: |
           git diff --name-only -- ./data/collections/ | awk '{sub(/^data\/collections\//, ""); print "- " $0}' > ../changed_collections_files.txt
           echo "::set-output name=changed_files::$(cat ../changed_collections_files.txt)"
-        working-directory: ./activity-list/
+        working-directory: ./skos-vocabulary/
 
       - name: Create Pull Request (if changes are detected)
         if: ${{ steps.compare.outputs.changeDescription || steps.collections_changed.outputs.changed_files }}
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
-          path: ./activity-list/
+          path: ./skos-vocabulary/
           token: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
           commit-message: Update activity list and collections
           committer: openactive-bot <openactive-bot@users.noreply.github.com>
           author: openactive-bot <openactive-bot@users.noreply.github.com>
           signoff: false
-          branch: ci/update-activity-list
+          branch: ci/update-skos-vocabulary
           delete-branch: true
           title: 'Update activity list and collections'
           body: |
@@ -104,7 +104,7 @@ jobs:
         if: ${{ steps.cpr.outputs.pull-request-number }}
         uses: actions/checkout@v2
         with:
-          ref: ci/update-activity-list
+          ref: ci/update-skos-vocabulary
           path: pr
           fetch-depth: 0
 
