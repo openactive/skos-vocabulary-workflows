@@ -43,8 +43,8 @@ jobs:
         id: compare
         uses: openactive/skos-compare-action@main
         with:
-          new_json_file: './skos-vocabulary-editor/${{ github.event.repository.name }}.jsonld'
-          old_json_file: './skos-vocabulary/data/${{ github.event.repository.name }}.jsonld'
+          new_jsonld_file: './skos-vocabulary-editor/${{ github.event.repository.name }}.jsonld'
+          old_jsonld_file: './skos-vocabulary/data/${{ github.event.repository.name }}.jsonld'
 
       # For security reasons, we only copy valid JSON-LD files to the next step
       - name: Validate and Copy JSON-LD files
