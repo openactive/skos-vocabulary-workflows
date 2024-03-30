@@ -136,7 +136,7 @@ jobs:
             // Vocabulary identifier is the repository name
             const vocabularyIdentifier = context.repo.repo;
 
-            // Extract Vocabulary Title from thes source vocabulary file 
+            // Extract Vocabulary Title from the source vocabulary file 
             const skosFile = `./vocab/data/${vocabularyIdentifier}.jsonld`;
             const data = JSON.parse(fs.readFileSync(skosFile));
             const vocabularyTitle = data.title;
