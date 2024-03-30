@@ -48,7 +48,7 @@ jobs:
             const schemaHandlebarsTemplate = Handlebars.compile(fs.readFileSync(schemaHandlebarsTemplateFile, 'utf8'));
             
             const schema = JSON.parse(schemaHandlebarsTemplate({ 'VOCAB_IDENTIFIER': vocabularyIdentifier }));
-            const data = JSON.parse(fs.readFileSync(skosFile));
+            const data = JSON.parse(fs.readFileSync(skosFile, 'utf8'));
 
             var ajv = new Ajv({ allErrors: 'true', verbose: 'true' });
 
@@ -138,13 +138,13 @@ jobs:
 
             // Extract Vocabulary Title from the source vocabulary file 
             const skosFile = `./vocab/data/${vocabularyIdentifier}.jsonld`;
-            const data = JSON.parse(fs.readFileSync(skosFile));
+            const data = JSON.parse(fs.readFileSync(skosFile, 'utf8'));
             const vocabularyTitle = data.title;
 
             // Render the index.html file
             const indexTemplateFile = "./workflow/workflow-dependencies/gh-pages/index.hbs";
-            const indexHandlebarsTemplate = Handlebars.compile(fs.readFileSync(indexTemplateFile));
-            const indexHtml = indexHandlebarsTemplate({ 'VOCAB_IDENTIFIER': vocabularyIdentifier, 'VOCAB_TITLE': vocabularyTitle }));
+            const indexHandlebarsTemplate = Handlebars.compile(fs.readFileSync(indexTemplateFile, 'utf8'));
+            const indexHtml = indexHandlebarsTemplate({ 'VOCAB_IDENTIFIER': vocabularyIdentifier, 'VOCAB_TITLE': vocabularyTitle });
             
             // Write the index.html file
             const indexFileLocation = "./vocab/data/index.html";
