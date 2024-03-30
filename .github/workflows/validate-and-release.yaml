@@ -45,7 +45,7 @@ jobs:
             var schemaHandlebarsTemplateFile = "./workflow/workflow-dependencies/schema/skos-vocabulary.schema.json.hbs";
             var skosFile = `./vocab/data/${vocabularyIdentifier}.jsonld`;
 
-            const schemaHandlebarsTemplate = Handlebars.compile(fs.readFileSync(schemaHandlebarsTemplateFile));
+            const schemaHandlebarsTemplate = Handlebars.compile(fs.readFileSync(schemaHandlebarsTemplateFile, 'utf8'));
             
             const schema = JSON.parse(schemaHandlebarsTemplate({ 'VOCAB_IDENTIFIER': vocabularyIdentifier }));
             const data = JSON.parse(fs.readFileSync(skosFile));
