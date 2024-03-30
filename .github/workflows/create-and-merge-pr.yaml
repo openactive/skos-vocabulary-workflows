@@ -7,6 +7,10 @@ on:
         description: 'Author of this release'     
         required: true
         type: string
+    secrets:
+      PUBLIC_REPO_ACCESS_TOKEN:
+        description: 'The GitHub token to use for creating and auto-merging the PR'
+        required: true
 
 jobs:
   create-and-merge-pr:
