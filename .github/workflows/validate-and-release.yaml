@@ -159,7 +159,7 @@ jobs:
         uses: actions/upload-pages-artifact@v3
         with:
           # Upload only /data/ directory
-          path: './data/'
+          path: './vocab/data/'
 
       - name: Deploy artifact to GitHub Pages
         if: ${{ steps.fetch_pr.outputs.result != ''}}
