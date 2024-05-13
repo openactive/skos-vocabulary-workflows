@@ -27,7 +27,7 @@ jobs:
       - name: Download Zip File of latest vocabulary and collections from skos-vocabulary-editor.
         run: |
           mkdir -p downloads
-          wget -O downloads/openactive_concepts.zip https://${{ github.event.repository.name }}.openactive.io/en/openactive_concepts.zip
+          wget -O downloads/openactive_concepts.zip https://legible-initially-toad.ngrok-free.app/en/openactive_concepts.zip
 
       - name: Extract Zip File
         run: |
@@ -43,8 +43,8 @@ jobs:
         id: compare
         uses: openactive/skos-compare-action@main
         with:
-          new_jsonld_file: './skos-vocabulary-editor/${{ github.event.repository.name }}.jsonld'
-          old_jsonld_file: './skos-vocabulary/data/${{ github.event.repository.name }}.jsonld'
+          new_jsonld_file: './skos-vocabulary-editor/activity-list.jsonld'
+          old_jsonld_file: './skos-vocabulary/data/activity-list.jsonld'
 
       # For security reasons, we only copy valid JSON-LD files to the next step
       - name: Validate and Copy JSON-LD files
@@ -64,6 +64,11 @@ jobs:
               echo "Invalid JSON-LD, skipping: $file"
             fi
           done
+
+      - name: Copy version (if it exists)
+        run: |
+          cp ./skos-vocabulary-editor/version.txt ./skos-vocabulary/data/version.txt
+          exit 0
 
       - name: Generate list of changed files in /data/collections/ directory
         id: collections_changed

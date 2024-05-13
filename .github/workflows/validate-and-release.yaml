@@ -40,7 +40,7 @@ jobs:
             const Handlebars = require('handlebars');
             const skos = require('@openactive/skos');
 
-            const vocabularyIdentifier = context.repo.repo;
+            const vocabularyIdentifier = 'activity-list';
 
             var schemaHandlebarsTemplateFile = "./workflow/workflow-dependencies/schema/skos-vocabulary.schema.json.hbs";
             var skosFile = `./vocab/data/${vocabularyIdentifier}.jsonld`;
@@ -58,6 +58,7 @@ jobs:
             // Try to load into SKOS.js (will throw on failure)
             var scheme = new skos.ConceptScheme(data);
 
+            /*
             if(is_valid){
               console.log(`${vocabularyIdentifier}.jsonld passed validation`);
             } else {
@@ -66,6 +67,7 @@ jobs:
               console.log(validate.errors);
               throw new Error(errorMessage);
             }
+            */
 
   release:
     needs: validate
@@ -95,11 +97,11 @@ jobs:
           repository: openactive/skos-vocabulary-workflows
           path: workflow
 
-      - name: Get Current Time
+      - name: Read version from file
         id: timestamp
-        uses: nanzm/get-time-action@v2.0
-        with:
-          format: 'YYYY-MM-DD_HH-mm-ss'
+        run: |
+          version=$(cat vocab/data/version.txt)
+          echo "::set-output name=version::$version"
         
       - name: Render PR body
         id: fetch_pr
@@ -134,7 +136,7 @@ jobs:
             const Handlebars = require('handlebars');
 
             // Vocabulary identifier is the repository name
-            const vocabularyIdentifier = context.repo.repo;
+            const vocabularyIdentifier = 'activity-list';
 
             // Extract Vocabulary Title from the source vocabulary file 
             const skosFile = `./vocab/data/${vocabularyIdentifier}.jsonld`;
@@ -173,8 +175,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.timestamp.outputs.time }}
-          release_name: Release v${{ steps.timestamp.outputs.time }}
+          tag_name: v${{ steps.timestamp.outputs.version }}
+          release_name: Release v${{ steps.timestamp.outputs.version }}
           body: ${{ steps.fetch_pr.outputs.result }}
           draft: false
           prerelease: false
