@@ -95,12 +95,22 @@ jobs:
           repository: openactive/skos-vocabulary-workflows
           path: workflow
 
-      - name: Get Current Time
+      - name: Get current time
         id: timestamp
         uses: nanzm/get-time-action@v2.0
         with:
           format: 'YYYY-MM-DD_HH-mm-ss'
-        
+
+      - name: Read version from file (if it exists)
+        id: version
+        run: |
+          if [ -f vocab/data/version.txt ]; then
+            version=$(cat vocab/data/version.txt)
+          else
+            version=""
+          fi
+          echo "::set-output name=version::$version"
+
       - name: Render PR body
         id: fetch_pr
         uses: actions/github-script@v7
@@ -173,8 +183,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.timestamp.outputs.time }}
-          release_name: Release v${{ steps.timestamp.outputs.time }}
+          tag_name: v${{ steps.version.outputs.version || steps.timestamp.outputs.time }}
+          release_name: Release v${{ steps.version.outputs.version || steps.timestamp.outputs.time }}
           body: ${{ steps.fetch_pr.outputs.result }}
           draft: false
           prerelease: false
