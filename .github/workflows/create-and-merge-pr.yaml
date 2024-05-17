@@ -43,7 +43,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y jq
 
-      - name: Compare current activity list with activity list from skos-vocabulary-editor
+      - name: Compare current vocabulary with vocabulary from skos-vocabulary-editor
         id: compare
         uses: openactive/skos-compare-action@main
         with:
@@ -95,18 +95,18 @@ jobs:
         with:
           path: ./skos-vocabulary/
           token: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
-          commit-message: Update activity list and collections
+          commit-message: Update vocabulary and collections
           committer: openactive-bot <openactive-bot@users.noreply.github.com>
           author: openactive-bot <openactive-bot@users.noreply.github.com>
           signoff: false
           branch: ci/update-skos-vocabulary
           delete-branch: true
-          title: 'Update activity list and collections'
+          title: 'Update vocabulary and collections'
           body: |
-            ${{ steps.compare.outputs.changeDescription && 'The following changes have been made to the OpenActive Activity List:' }}
+            ${{ steps.compare.outputs.changeDescription && 'The following changes have been made to the SKOS Vocabulary:' }}
             ${{ steps.compare.outputs.changeDescription }}
 
-            ${{ steps.collections_changed.outputs.changed_files && 'The following OpenActive Collections have been updated:' }}
+            ${{ steps.collections_changed.outputs.changed_files && 'The following SKOS Collections have been updated:' }}
             ${{ steps.collections_changed.outputs.changed_files }}
 
             Release author: ${{ github.event.inputs.publisher }}
