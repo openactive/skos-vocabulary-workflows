@@ -11,10 +11,6 @@ on:
         description: 'Date of this release'     
         required: false
         type: string
-    secrets:
-      PUBLIC_REPO_ACCESS_TOKEN:
-        description: 'The GitHub token to use for creating and auto-merging the PR'
-        required: true
 
 jobs:
   create-and-merge-pr:
@@ -88,13 +84,20 @@ jobs:
           echo "::set-output name=changed_files::$(cat ../changed_collections_files.txt)"
         working-directory: ./skos-vocabulary/
 
+      - name: Generate GitHub App Token
+        uses: actions/create-github-app-token@v1
+        id: generate-token
+        with:
+          app-id: ${{ secrets.GH_APP_ID }}
+          private-key: ${{ secrets.GH_APP_PRIVATE_KEY }}
+
       - name: Create Pull Request (if changes are detected)
         if: ${{ steps.compare.outputs.changeDescription || steps.collections_changed.outputs.changed_files }}
         id: cpr
         uses: peter-evans/create-pull-request@v6
         with:
           path: ./skos-vocabulary/
-          token: ${{ secrets.PUBLIC_REPO_ACCESS_TOKEN }}
+          token: ${{ steps.generate-token.outputs.token }}
           commit-message: Update vocabulary and collections
           committer: openactive-bot <openactive-bot@users.noreply.github.com>
           author: openactive-bot <openactive-bot@users.noreply.github.com>
@@ -134,7 +137,7 @@ jobs:
         working-directory: ./pr/
         env:
           PR_URL: ${{ steps.cpr.outputs.pull-request-url }}
-          GITHUB_TOKEN: ${{secrets.PUBLIC_REPO_ACCESS_TOKEN}}
+          GITHUB_TOKEN: ${{ steps.generate-token.outputs.token }}
 
       - name: Check outputs
         if: ${{ steps.cpr.outputs.pull-request-number }}
